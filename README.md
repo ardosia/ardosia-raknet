@@ -1,142 +1,79 @@
-# raknet-rust
+# ardosia-raknet
 
-[![Rust](https://img.shields.io/badge/Rust-2024_edition-000000?logo=rust)](https://www.rust-lang.org/)
+[![Rust](https://img.shields.io/badge/Rust-1.88%2B-000000?logo=rust)](https://www.rust-lang.org/)
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Stable-brightgreen)](#)
-[![Platform](https://img.shields.io/badge/Platform-%20RakNet-2ea44f)](#)
+[![Status](https://img.shields.io/badge/Status-Pre--release-yellow)](#status)
 
-`raknet-rust` is a RakNet transport library written in Rust.
+`ardosia-raknet` is an Ardosia-maintained hardfork of `mcbe-rs/raknet-rust`, kept as a standalone asynchronous RakNet transport library for Rust.
 
-It is built for modern async server/client networking and is especially useful for
-Minecraft Bedrock Edition projects (servers, proxies, and tooling), while still remaining
-usable as a general RakNet library.
+The repository intentionally stays below the Ardosia game/protocol layers. It owns RakNet and UDP transport mechanics; MCPE packet definitions, gameplay semantics, and server state do not belong here.
 
-## Getting Started
+## Status
 
-### Installation
+This hardfork is pre-release. The initial branch is being brought to behavioral equivalence with the RakNet source previously vendored by `ardosia-network` before any API redesign or transport cleanup.
 
-With `cargo add`:
+Current baseline:
 
-```bash
-cargo add raknet-rust
-```
+- package name: `raknet-rust`
+- upstream version: `0.2.0`
+- fork baseline: `3edfb4170e6cb5aeed992b09b50176fb7e5b6079`
+- Rust: `1.88+`
+- license: Apache-2.0
 
-Or edit `Cargo.toml` directly:
+See [`UPSTREAM.md`](UPSTREAM.md) for provenance and fork policy.
+
+## Scope
+
+The hardfork owns:
+
+- UDP socket binding and tuning;
+- RakNet offline and connected handshakes;
+- sessions and session state;
+- reliability, ordering and sequencing;
+- ACK/NACK and retransmission behavior;
+- congestion and pacing;
+- fragmentation and reassembly;
+- sharded transport runtime behavior;
+- transport-level rate limiting, abuse controls and processing budgets;
+- low-level transport telemetry;
+- RakNet protocol-version compatibility.
+
+It does **not** own MCPE protocol 84 packet definitions, gameplay state, world logic, or Ardosia application/server behavior.
+
+## Using the hardfork
+
+Until a deliberate release/publishing policy exists, consumers should pin an exact Git revision rather than track a moving branch:
 
 ```toml
 [dependencies]
-raknet-rust = "0.2.0"
-```
-
-## API Surface
-
-- Stable application API lives under `client`, `server`, `listener`, `connection` and root re-exports.
-- Advanced low-level API is namespaced under `raknet_rust::low_level::{protocol, session, transport}`.
-
-### Usage
-
-Basic server:
-
-```rust
-use std::net::{IpAddr, Ipv4Addr, SocketAddr};
-use raknet_rust::server::{RaknetServer, RaknetServerEvent};
-
-#[tokio::main(flavor = "current_thread")]
-async fn main() -> std::io::Result<()> {
-    let bind = SocketAddr::new(IpAddr::V4(Ipv4Addr::UNSPECIFIED), 19132);
-    let mut server = RaknetServer::bind(bind).await?;
-
-    while let Some(event) = server.next_event().await {
-        if let RaknetServerEvent::Packet { peer_id, payload, .. } = event {
-            server.send(peer_id, payload).await?;
-        }
-    }
-
-    Ok(())
+raknet-rust = {
+    git = "https://github.com/ardosia/ardosia-raknet",
+    rev = "<exact-commit-sha>"
 }
 ```
 
-Basic client:
+`ardosia-network` follows this exact-SHA policy so transport behavior remains reproducible.
 
-```rust
-use std::net::{IpAddr, Ipv4Addr, SocketAddr};
-use raknet_rust::client::{RaknetClient, RaknetClientEvent};
+## API surface
 
-#[tokio::main(flavor = "current_thread")]
-async fn main() -> std::io::Result<()> {
-    let addr = SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), 19132);
-    let mut client = RaknetClient::connect(addr).await?;
+The inherited application API lives under `client`, `server`, `listener`, `connection` and root re-exports. Advanced low-level APIs are namespaced under `raknet_rust::low_level::{protocol, session, transport}`.
 
-    while let Some(event) = client.next_event().await {
-        match event {
-            RaknetClientEvent::Connected { .. } => client.send(b"\xfehello").await?,
-            RaknetClientEvent::Packet { .. } => break,
-            RaknetClientEvent::Disconnected { .. } => break,
-            _ => {}
-        }
-    }
+No Ardosia-specific game protocol concepts should be added merely for convenience. If a concept belongs in the stable Ardosia networking facade, it belongs in `ardosia-network` instead.
 
-    Ok(())
-}
+## Verification
+
+Run the standalone hardfork gate with:
+
+```bash
+cargo fmt --all -- --check
+cargo clippy --all-targets -- -D warnings
+cargo test --all-targets
 ```
 
-Callback facade (`on_connect / on_packet / on_disconnect`):
+Transport behavior changes should be backed by protocol correctness evidence, regression tests, benchmark evidence, or profiling evidence. Production abuse-control defaults must not be weakened solely to make localhost load-generation artifacts disappear.
 
-```rust
-use std::pin::Pin;
-use std::future::Future;
-use raknet_rust::server::RaknetServer;
+## License and provenance
 
-fn hook_ok<'a>() -> Pin<Box<dyn Future<Output = std::io::Result<()>> + Send + 'a>> {
-    Box::pin(async { Ok(()) })
-}
+The project remains Apache-2.0 licensed. Upstream history and attribution are preserved; see [`UPSTREAM.md`](UPSTREAM.md).
 
-#[tokio::main(flavor = "current_thread")]
-async fn main() -> std::io::Result<()> {
-    let mut server = RaknetServer::bind("0.0.0.0:19132".parse().unwrap()).await?;
-    let mut facade = server
-        .facade()
-        .on_connect(|_server, _event| hook_ok())
-        .on_packet(|server, event| Box::pin(async move {
-            server.send(event.peer_id, event.payload).await?;
-            Ok(())
-        }))
-        .on_disconnect(|_server, _event| hook_ok());
-
-    facade.run().await
-}
-```
-
-Listener incoming helper:
-
-```rust
-use std::net::SocketAddr;
-use raknet_rust::Listener;
-
-#[tokio::main(flavor = "current_thread")]
-async fn main() -> std::io::Result<()> {
-    let bind: SocketAddr = "0.0.0.0:19132".parse().unwrap();
-    let mut listener = Listener::bind(bind).await?;
-    listener.start().await?;
-
-    let mut incoming = listener.incoming()?;
-    while let Some(conn) = incoming.next().await {
-        let meta = conn.metadata();
-        println!("accepted peer={} addr={}", meta.id().as_u64(), meta.remote_addr());
-    }
-
-    Ok(())
-}
-```
-
-## Observability
-
-- The runtime emits `tracing` events (connect, disconnect, decode error, handshake reject/timeout).
-- To collect logs in your application, configure a subscriber (for example, `tracing-subscriber`).
-- For Prometheus format export, use `telemetry::TelemetryExporter`:
-  - `exporter.ingest_server_event(&event)`
-  - `let body = exporter.render_prometheus()`
-
-## License
-
-Apache-2.0. See [LICENSE](LICENSE) for details.
+The original upstream project does not endorse or support Ardosia.
