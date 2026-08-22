@@ -62,13 +62,15 @@ No Ardosia-specific game protocol concepts should be added merely for convenienc
 
 ## Verification
 
-Run the standalone hardfork gate with:
+The repository declares Rust `1.88` as its minimum supported toolchain. Run the standalone hardfork gate on that exact toolchain:
 
 ```bash
-cargo fmt --all -- --check
-cargo clippy --all-targets -- -D warnings
-cargo test --all-targets
+cargo +1.88.0 fmt --all -- --check
+cargo +1.88.0 clippy --all-targets -- -D warnings
+cargo +1.88.0 test --all-targets
 ```
+
+CI is pinned to Rust `1.88.0` as well so a future moving `stable` Clippy release cannot turn inherited style lints into unrelated extraction failures.
 
 Transport behavior changes should be backed by protocol correctness evidence, regression tests, benchmark evidence, or profiling evidence. Production abuse-control defaults must not be weakened solely to make localhost load-generation artifacts disappear.
 
