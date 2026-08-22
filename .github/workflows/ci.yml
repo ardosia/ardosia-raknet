@@ -16,6 +16,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
+          toolchain: 1.88.0
           components: rustfmt
       - uses: Swatinem/rust-cache@v2
       - name: cargo fmt --check
@@ -32,6 +33,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
+          toolchain: 1.88.0
           components: clippy
       - uses: Swatinem/rust-cache@v2
       - name: cargo clippy (gate)
@@ -47,6 +49,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.88.0
       - uses: Swatinem/rust-cache@v2
       - name: cargo test
         run: cargo test -q
@@ -59,6 +63,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.88.0
       - uses: Swatinem/rust-cache@v2
       - name: raknet_soak smoke
         run: cargo run --quiet --example raknet_soak -- --sessions=64 --ticks=120 --payload-bytes=120
