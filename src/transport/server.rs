@@ -2280,7 +2280,8 @@ fn random_cookie_key() -> [u8; COOKIE_KEY_LEN] {
     }
 
     let fallback = unix_timestamp_millis() as u64;
-    for (idx, chunk) in key.chunks_exact_mut(8).enumerate() {
+    let (chunks, _) = key.as_chunks_mut::<8>();
+    for (idx, chunk) in chunks.iter_mut().enumerate() {
         let seed = fallback
             .wrapping_mul((idx as u64).saturating_add(1))
             .rotate_left((idx as u32).saturating_mul(11));
