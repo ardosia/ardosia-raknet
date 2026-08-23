@@ -1,6 +1,6 @@
 # ardosia-raknet
 
-[![Rust](https://img.shields.io/badge/Rust-1.88%2B-000000?logo=rust)](https://www.rust-lang.org/)
+[![Rust](https://img.shields.io/badge/Rust-1.98%2B-000000?logo=rust)](https://www.rust-lang.org/)
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Pre--release-yellow)](#status)
 
@@ -18,7 +18,7 @@ Current baseline:
 - upstream version: `0.2.0`
 - fork baseline: `3edfb4170e6cb5aeed992b09b50176fb7e5b6079`
 - network integration revision: `f127fce27a206a51a1d39ffa7a9bbed98d10ea14`
-- Rust: `1.88+`
+- Rust: `1.98+`
 - license: Apache-2.0
 
 See [`UPSTREAM.md`](UPSTREAM.md) for provenance and fork policy.
@@ -63,15 +63,15 @@ No Ardosia-specific game protocol concepts should be added merely for convenienc
 
 ## Verification
 
-The repository declares Rust `1.88` as its minimum supported toolchain. Run the standalone hardfork gate on that exact toolchain:
+The repository declares Rust `1.98` as its minimum supported toolchain. Run the standalone hardfork gate on that exact toolchain:
 
 ```bash
-cargo +1.88.0 fmt --all -- --check
-cargo +1.88.0 clippy --all-targets --all-features -- -D warnings
-cargo +1.88.0 test --all-targets
+cargo +1.98.0 fmt --all -- --check
+cargo +1.98.0 clippy --all-targets --all-features -- -D warnings
+cargo +1.98.0 test --all-targets
 ```
 
-CI is pinned to Rust `1.88.0` as well so a future moving `stable` Clippy release cannot turn inherited style lints into unrelated failures.
+CI and `rust-toolchain.toml` are pinned to Rust `1.98.0` as well so a future moving `stable` Clippy release cannot turn inherited style lints into unrelated failures.
 
 Transport behavior changes should be backed by protocol correctness evidence, regression tests, benchmark evidence, or profiling evidence. Production abuse-control defaults must not be weakened solely to make localhost load-generation artifacts disappear.
 
