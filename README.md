@@ -10,13 +10,14 @@ The repository intentionally stays below the Ardosia game/protocol layers. It ow
 
 ## Status
 
-This hardfork is pre-release. The initial branch is being brought to behavioral equivalence with the RakNet source previously vendored by `ardosia-network` before any API redesign or transport cleanup.
+This hardfork is pre-release. The behavior-preserving extraction is complete: `ardosia-network` now consumes the standalone hardfork at the exact verified revision `f127fce27a206a51a1d39ffa7a9bbed98d10ea14`. Future API or transport changes should be reviewed as standalone hardfork work rather than bundled as extraction cleanup.
 
 Current baseline:
 
 - package name: `raknet-rust`
 - upstream version: `0.2.0`
 - fork baseline: `3edfb4170e6cb5aeed992b09b50176fb7e5b6079`
+- network integration revision: `f127fce27a206a51a1d39ffa7a9bbed98d10ea14`
 - Rust: `1.88+`
 - license: Apache-2.0
 
@@ -66,11 +67,11 @@ The repository declares Rust `1.88` as its minimum supported toolchain. Run the 
 
 ```bash
 cargo +1.88.0 fmt --all -- --check
-cargo +1.88.0 clippy --all-targets -- -D warnings
+cargo +1.88.0 clippy --all-targets --all-features -- -D warnings
 cargo +1.88.0 test --all-targets
 ```
 
-CI is pinned to Rust `1.88.0` as well so a future moving `stable` Clippy release cannot turn inherited style lints into unrelated extraction failures.
+CI is pinned to Rust `1.88.0` as well so a future moving `stable` Clippy release cannot turn inherited style lints into unrelated failures.
 
 Transport behavior changes should be backed by protocol correctness evidence, regression tests, benchmark evidence, or profiling evidence. Production abuse-control defaults must not be weakened solely to make localhost load-generation artifacts disappear.
 
