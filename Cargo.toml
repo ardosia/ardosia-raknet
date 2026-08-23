@@ -2,20 +2,20 @@
 name = "raknet-rust"
 version = "0.2.0"
 edition = "2024"
-rust-version = "1.85"
+rust-version = "1.88"
 license = "Apache-2.0"
-description = "Asynchronous, high-performance RakNet transport library for Rust."
+description = "Asynchronous RakNet transport library maintained by the Ardosia project."
 authors = ["ClexaGod"]
 readme = "README.md"
-repository = "https://github.com/mcbe-rs/raknet-rust"
-homepage = "https://github.com/mcbe-rs/raknet-rust"
-documentation = "https://docs.rs/raknet-rust/latest/raknet_rust/"
+repository = "https://github.com/ardosia/ardosia-raknet"
+homepage = "https://github.com/ardosia/ardosia-raknet"
 keywords = ["raknet", "udp", "tokio", "async", "game-networking"]
 categories = ["network-programming", "asynchronous", "game-development"]
 include = [
     "Cargo.toml",
     "README.md",
     "LICENSE*",
+    "UPSTREAM.md",
     "src/**",
     "examples/**",
     "tests/**",
