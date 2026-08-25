@@ -6,22 +6,22 @@
 
 `ardosia-raknet` is an Ardosia-maintained hardfork of `mcbe-rs/raknet-rust`, kept as a standalone asynchronous RakNet transport library for Rust.
 
-The repository intentionally stays below the Ardosia game/protocol layers. It owns RakNet and UDP transport mechanics; MCPE packet definitions, gameplay semantics, and server state do not belong here.
+It sits below all Minecraft/game-specific layers. MCPE packet definitions, gameplay semantics, world state, and Ardosia application behavior do not belong here.
 
 ## Status
 
-This hardfork is pre-release. The behavior-preserving extraction is complete: `ardosia-network` now consumes the standalone hardfork at the exact verified revision `f127fce27a206a51a1d39ffa7a9bbed98d10ea14`. Future API or transport changes should be reviewed as standalone hardfork work rather than bundled as extraction cleanup.
+The hardfork is pre-release and is actively consumed by `ardosia-network` using an exact Git revision for reproducibility.
 
 Current baseline:
 
 - package name: `raknet-rust`
 - upstream version: `0.2.0`
-- fork baseline: `3edfb4170e6cb5aeed992b09b50176fb7e5b6079`
-- network integration revision: `f127fce27a206a51a1d39ffa7a9bbed98d10ea14`
-- Rust: `1.98+`
+- preserved upstream baseline: `3edfb4170e6cb5aeed992b09b50176fb7e5b6079`
+- Ardosia network-pinned revision: `f127fce27a206a51a1d39ffa7a9bbed98d10ea14`
+- Rust baseline: `1.98.0`
 - license: Apache-2.0
 
-See [`UPSTREAM.md`](UPSTREAM.md) for provenance and fork policy.
+See `UPSTREAM.md` for provenance and fork policy.
 
 ## Scope
 
@@ -30,20 +30,28 @@ The hardfork owns:
 - UDP socket binding and tuning;
 - RakNet offline and connected handshakes;
 - sessions and session state;
-- reliability, ordering and sequencing;
+- reliability, ordering, and sequencing;
 - ACK/NACK and retransmission behavior;
 - congestion and pacing;
 - fragmentation and reassembly;
 - sharded transport runtime behavior;
-- transport-level rate limiting, abuse controls and processing budgets;
+- transport-level rate limiting, abuse controls, and processing budgets;
 - low-level transport telemetry;
 - RakNet protocol-version compatibility.
 
-It does **not** own MCPE protocol 84 packet definitions, gameplay state, world logic, or Ardosia application/server behavior.
+It does **not** own:
+
+- MCPE protocol-84 packet definitions/codecs;
+- game/session policy;
+- world/chunk serialization;
+- gameplay state;
+- Ardosia application/server lifecycle.
+
+Those responsibilities live above this layer in `ardosia-network`, `ardosia-protocol`, and `ardosia-server`.
 
 ## Using the hardfork
 
-Until a deliberate release/publishing policy exists, consumers should pin an exact Git revision rather than track a moving branch:
+Until a deliberate release/publishing policy exists, consumers should pin an exact Git revision rather than a moving branch:
 
 ```toml
 [dependencies]
@@ -53,30 +61,46 @@ raknet-rust = {
 }
 ```
 
-`ardosia-network` follows this exact-SHA policy so transport behavior remains reproducible.
+`ardosia-network` follows this policy so transport behavior remains reproducible.
 
 ## API surface
 
-The inherited application API lives under `client`, `server`, `listener`, `connection` and root re-exports. Advanced low-level APIs are namespaced under `raknet_rust::low_level::{protocol, session, transport}`.
+The inherited application API lives under `client`, `server`, `listener`, `connection`, and root re-exports. Advanced low-level APIs are namespaced under `raknet_rust::low_level::{protocol, session, transport}`.
 
-No Ardosia-specific game protocol concepts should be added merely for convenience. If a concept belongs in the stable Ardosia networking facade, it belongs in `ardosia-network` instead.
+No Ardosia-specific game-protocol concepts should be added for convenience. Generic facade concerns belong in `ardosia-network`; MCPE concerns belong above it.
+
+## Ardosia compatibility use
+
+The hardfork remains protocol-version configurable. The current Ardosia server stack uses RakNet protocol `8` and disables the newer handshake-cookie path through generic transport configuration supplied by `ardosia-network`.
+
+That compatibility profile has been exercised by a real MCPE 0.15.10 client through the network/server stack. This does not turn the hardfork into an MCPE-specific library.
 
 ## Verification
 
-The repository declares Rust `1.98` as its minimum supported toolchain. Run the standalone hardfork gate on that exact toolchain:
+Run the standalone Rust `1.98.0` gate:
 
 ```bash
 cargo +1.98.0 fmt --all -- --check
 cargo +1.98.0 clippy --all-targets --all-features -- -D warnings
 cargo +1.98.0 test --all-targets
+git diff --check
 ```
 
-CI and `rust-toolchain.toml` are pinned to Rust `1.98.0` as well so a future moving `stable` Clippy release cannot turn inherited style lints into unrelated failures.
+Transport behavior changes should be backed by protocol correctness evidence, regression tests, benchmark evidence, or profiling evidence.
 
-Transport behavior changes should be backed by protocol correctness evidence, regression tests, benchmark evidence, or profiling evidence. Production abuse-control defaults must not be weakened solely to make localhost load-generation artifacts disappear.
+Production abuse-control defaults must not be weakened solely to make localhost load-generation artifacts disappear.
+
+## Design policy
+
+Keep this repository reusable and transport-focused:
+
+- changes should describe generic RakNet behavior rather than Ardosia game concepts;
+- public low-level configuration should remain explicit rather than hidden behind application assumptions;
+- correctness and compatibility take priority over benchmark-only tuning;
+- higher layers should consume stable/opaque transport surfaces rather than implementation internals.
 
 ## License and provenance
 
-The project remains Apache-2.0 licensed. Upstream history and attribution are preserved; see [`UPSTREAM.md`](UPSTREAM.md).
+The project remains Apache-2.0 licensed. Upstream history and attribution are preserved; see `UPSTREAM.md`.
 
 The original upstream project does not endorse or support Ardosia.
