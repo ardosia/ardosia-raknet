@@ -1,0 +1,68 @@
+name: Bug report
+description: Report a reproducible defect in the Ardosia RakNet hardfork
+title: "[bug] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. For suspected security vulnerabilities, stop here and follow SECURITY.md instead of opening a public issue.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What went wrong?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Include the smallest code, packet sequence, or test case that reproduces the issue.
+    validations:
+      required: true
+  - type: input
+    id: revision
+    attributes:
+      label: Affected commit
+      description: Exact Git SHA if possible.
+      placeholder: 40-character commit SHA
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, architecture, Rust version, and relevant runtime details.
+      placeholder: Linux x86_64, rustc 1.98.0
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Sanitized logs or traces
+      description: Remove credentials, private infrastructure details, and unrelated user data.
+      render: text
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched existing issues and pull requests for this problem.
+          required: true
+        - label: This report does not disclose an uncoordinated security vulnerability.
+          required: true
+        - label: I am testing only systems I own or have permission to assess.
+          required: true

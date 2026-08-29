@@ -1,0 +1,60 @@
+name: Feature or design proposal
+description: Propose a generic RakNet capability or behavior change
+title: "[proposal] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This repository stays generic to RakNet. Minecraft/gameplay/application features belong in consuming projects rather than this hardfork.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What concrete transport problem or missing capability are you trying to solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe the smallest generic RakNet change that solves the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: justification
+    attributes:
+      label: Why this belongs in the RakNet layer
+      description: Explain why this is generic transport behavior rather than game/application policy.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Include application-layer solutions or no-change options you considered.
+    validations:
+      required: true
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: API and compatibility impact
+      description: Note public API, wire behavior, protocol-version, runtime-policy, or migration implications.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Verification or evidence plan
+      description: Describe tests, protocol evidence, benchmark evidence, or profiling evidence that would validate the change.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched existing issues and pull requests for this proposal.
+          required: true
+        - label: This proposal does not require Minecraft/game-specific behavior in this repository.
+          required: true
