@@ -3834,7 +3834,7 @@ mod tests {
                 ipv6_unicast_hops: None,
                 disable_ip_fragmentation: false,
             },
-            ..TransportSocketTuning::default()
+            ..TransportConfig::default()
         };
         let rt = Builder::new_current_thread()
             .enable_all()
