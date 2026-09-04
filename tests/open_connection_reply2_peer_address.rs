@@ -2,8 +2,10 @@ use bytes::BytesMut;
 use raknet_rust::handshake::{
     OfflinePacket, OpenConnectionRequest1, OpenConnectionRequest2, Request2ParsePath,
 };
-use raknet_rust::protocol::constants::DEFAULT_UNCONNECTED_MAGIC;
-use raknet_rust::transport::{HandshakeHeuristicsConfig, TransportConfig, TransportEvent, TransportServer};
+use raknet_rust::low_level::protocol::constants::DEFAULT_UNCONNECTED_MAGIC;
+use raknet_rust::low_level::transport::{
+    HandshakeHeuristicsConfig, TransportConfig, TransportEvent, TransportServer,
+};
 use tokio::net::UdpSocket;
 
 async fn exchange_offline(
