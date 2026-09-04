@@ -15,7 +15,9 @@ async fn exchange_offline(
     packet: OfflinePacket,
 ) -> OfflinePacket {
     let mut encoded = BytesMut::new();
-    packet.encode(&mut encoded).expect("offline packet must encode");
+    packet
+        .encode(&mut encoded)
+        .expect("offline packet must encode");
     client
         .send_to(&encoded, server_addr)
         .await
