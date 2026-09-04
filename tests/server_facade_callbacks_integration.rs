@@ -1,7 +1,7 @@
 use std::io;
 use std::net::SocketAddr;
-use std::sync::Arc;
 use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::Arc;
 use std::time::Duration;
 
 use bytes::Bytes;
@@ -56,6 +56,7 @@ async fn wait_for_client_packet(client: &mut RaknetClient) -> Bytes {
 async fn pump_facade_until(
     facade: &mut ServerFacade<'_>,
     timeout_budget: Duration,
+    stage: &'static str,
     mut condition: impl FnMut() -> bool,
 ) -> io::Result<()> {
     timeout(timeout_budget, async {
@@ -75,7 +76,7 @@ async fn pump_facade_until(
     .map_err(|_| {
         io::Error::new(
             io::ErrorKind::TimedOut,
-            "timed out waiting for facade condition",
+            format!("timed out waiting for facade {stage} condition"),
         )
     })?
 }
@@ -128,7 +129,7 @@ async fn facade_handlers_drive_connect_packet_disconnect_flow() -> io::Result<()
     let mut client = RaknetClient::connect(bind_addr).await?;
     wait_for_client_connected(&mut client).await;
 
-    pump_facade_until(&mut facade, Duration::from_secs(3), || {
+    pump_facade_until(&mut facade, Duration::from_secs(3), "connect", || {
         connect_count.load(Ordering::SeqCst) >= 1
     })
     .await?;
@@ -136,7 +137,7 @@ async fn facade_handlers_drive_connect_packet_disconnect_flow() -> io::Result<()
     let payload = Bytes::from_static(b"\xfe-facade-echo");
     client.send(payload.clone()).await?;
 
-    pump_facade_until(&mut facade, Duration::from_secs(3), || {
+    pump_facade_until(&mut facade, Duration::from_secs(3), "packet", || {
         packet_count.load(Ordering::SeqCst) >= 1
     })
     .await?;
@@ -146,7 +147,7 @@ async fn facade_handlers_drive_connect_packet_disconnect_flow() -> io::Result<()
 
     let _ = client.disconnect(None).await;
 
-    pump_facade_until(&mut facade, Duration::from_secs(3), || {
+    pump_facade_until(&mut facade, Duration::from_secs(3), "disconnect", || {
         disconnect_count.load(Ordering::SeqCst) >= 1
     })
     .await?;
