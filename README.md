@@ -117,7 +117,7 @@ Because this fork is pre-release, consumers should review the exact revision the
 
 ## Ardosia compatibility use
 
-The hardfork remains protocol-version configurable. Ardosia currently uses RakNet protocol `8` and disables the newer handshake-cookie path through generic transport configuration supplied by its private networking facade.
+The hardfork remains protocol-version configurable. Ardosia currently uses RakNet protocol `8` and disables the newer handshake-cookie path through generic transport configuration supplied by its networking facade.
 
 That compatibility profile has been exercised by a real Minecraft: Pocket Edition 0.15.10 client through the wider Ardosia stack. This evidence does not make the hardfork Minecraft-specific and is not a universal capacity or compatibility claim.
 
