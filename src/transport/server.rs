@@ -1649,7 +1649,7 @@ impl TransportServer {
 
                     let reply = OfflinePacket::OpenConnectionReply2(OpenConnectionReply2 {
                         server_guid: self.config.server_guid,
-                        server_addr: local_server_addr,
+                        server_addr: addr,
                         mtu: retry_mtu,
                         use_encryption: false,
                         magic: self.config.unconnected_magic,
@@ -1690,7 +1690,7 @@ impl TransportServer {
                 );
                 let reply = OfflinePacket::OpenConnectionReply2(OpenConnectionReply2 {
                     server_guid: self.config.server_guid,
-                    server_addr: local_server_addr,
+                    server_addr: addr,
                     mtu,
                     use_encryption: false,
                     magic: self.config.unconnected_magic,
@@ -3834,7 +3834,7 @@ mod tests {
                 ipv6_unicast_hops: None,
                 disable_ip_fragmentation: false,
             },
-            ..TransportConfig::default()
+            ..TransportSocketTuning::default()
         };
         let rt = Builder::new_current_thread()
             .enable_all()
