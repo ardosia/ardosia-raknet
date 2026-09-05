@@ -18,7 +18,7 @@ Current baseline:
 - package/crate name: `raknet-rust`
 - upstream version lineage: `0.2.0`
 - preserved upstream baseline: `3edfb4170e6cb5aeed992b09b50176fb7e5b6079`
-- current Ardosia network pin: `f127fce27a206a51a1d39ffa7a9bbed98d10ea14`
+- current Ardosia network pin: `55b57787b6715ef2a931631ef4b690e3df0651e5`
 - Rust baseline: `1.98.0`
 - license: Apache-2.0
 
