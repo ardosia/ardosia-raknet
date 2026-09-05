@@ -17,22 +17,40 @@ impl SessionState {
     pub fn can_transition_to(self, next: SessionState) -> bool {
         use SessionState as S;
 
-        if self == next {
-            return true;
+        let allowed = if self == next {
+            true
+        } else {
+            matches!(
+                (self, next),
+                (S::Offline, S::Req1Recv)
+                    | (S::Req1Recv, S::Reply1Sent)
+                    | (S::Reply1Sent, S::Req2Recv)
+                    | (S::Req2Recv, S::Reply2Sent)
+                    | (S::Reply2Sent, S::ConnReqRecv)
+                    | (S::ConnReqRecv, S::ConnReqAcceptedSent)
+                    | (S::ConnReqAcceptedSent, S::NewIncomingRecv)
+                    | (S::NewIncomingRecv, S::Connected)
+                    | (S::Connected, S::Closing)
+                    | (S::Closing, S::Closed)
+            )
+        };
+
+        if matches!(
+            next,
+            S::Req1Recv
+                | S::Reply1Sent
+                | S::Req2Recv
+                | S::Reply2Sent
+                | S::ConnReqRecv
+                | S::ConnReqAcceptedSent
+                | S::NewIncomingRecv
+                | S::Connected
+        ) {
+            eprintln!(
+                "raknet session transition: {self:?} -> {next:?}, allowed={allowed}"
+            );
         }
 
-        matches!(
-            (self, next),
-            (S::Offline, S::Req1Recv)
-                | (S::Req1Recv, S::Reply1Sent)
-                | (S::Reply1Sent, S::Req2Recv)
-                | (S::Req2Recv, S::Reply2Sent)
-                | (S::Reply2Sent, S::ConnReqRecv)
-                | (S::ConnReqRecv, S::ConnReqAcceptedSent)
-                | (S::ConnReqAcceptedSent, S::NewIncomingRecv)
-                | (S::NewIncomingRecv, S::Connected)
-                | (S::Connected, S::Closing)
-                | (S::Closing, S::Closed)
-        )
+        allowed
     }
 }
