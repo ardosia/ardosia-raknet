@@ -84,7 +84,14 @@ impl ConnectedControlPacket {
     }
 
     pub fn encode(&self, dst: &mut impl BufMut) -> Result<(), EncodeError> {
-        self.id().encode_raknet(dst)?;
+        let id = self.id();
+        if matches!(
+            id,
+            ID_CONNECTION_REQUEST | ID_CONNECTION_REQUEST_ACCEPTED | ID_NEW_INCOMING_CONNECTION
+        ) {
+            eprintln!("raknet connected control encode: id=0x{id:02x}, packet={self:?}");
+        }
+        id.encode_raknet(dst)?;
         match self {
             Self::ConnectedPing(pkt) => pkt.ping_time.encode_raknet(dst)?,
             Self::ConnectedPong(pkt) => {
@@ -125,6 +132,15 @@ impl ConnectedControlPacket {
 
     pub fn decode(src: &mut impl Buf) -> Result<Self, DecodeError> {
         let id = u8::decode_raknet(src)?;
+        if matches!(
+            id,
+            ID_CONNECTION_REQUEST | ID_CONNECTION_REQUEST_ACCEPTED | ID_NEW_INCOMING_CONNECTION
+        ) {
+            eprintln!(
+                "raknet connected control decode: id=0x{id:02x}, remaining={}",
+                src.remaining()
+            );
+        }
         match id {
             ID_CONNECTED_PING => Ok(Self::ConnectedPing(ConnectedPing {
                 ping_time: i64::decode_raknet(src)?,
