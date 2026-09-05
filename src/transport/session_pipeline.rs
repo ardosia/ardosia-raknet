@@ -49,6 +49,13 @@ impl SessionPipeline {
         frame: Frame,
         out: &mut Vec<Frame>,
     ) -> PipelineFrameAction {
+        eprintln!(
+            "raknet inbound app frame: state={state:?}, reliability={:?}, len={}, first_byte={:?}",
+            frame.header.reliability,
+            frame.payload.len(),
+            frame.payload.first().copied()
+        );
+
         if state == SessionState::Connected {
             out.push(frame);
             return PipelineFrameAction::Deliver;
@@ -83,6 +90,7 @@ impl SessionPipeline {
         }
         self.unhandled_frames_flushed =
             self.unhandled_frames_flushed.saturating_add(flushed as u64);
+        eprintln!("raknet inbound app frame flush: state={state:?}, flushed={flushed}");
         flushed
     }
 
