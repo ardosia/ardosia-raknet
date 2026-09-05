@@ -90,7 +90,7 @@ pub mod low_level {
             QueueDispatchResult, RemoteDisconnectReason, SessionTunables, ShardedRuntimeCommand,
             ShardedRuntimeConfig, ShardedRuntimeEvent, ShardedRuntimeHandle, ShardedSendPayload,
             TransportConfig, TransportEvent, TransportMetricsSnapshot, TransportRateLimitConfig,
-            TransportServer,
+            TransportServer, spawn_sharded_runtime,
         };
     }
 }
