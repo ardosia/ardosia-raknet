@@ -27,6 +27,20 @@ See [`UPSTREAM.md`](UPSTREAM.md) for the exact fork provenance and maintenance p
 > [!IMPORTANT]
 > The upstream project owns the `raknet-rust` package published on crates.io. This Ardosia hardfork is **Git-only for now** and is not a separate crates.io release of that package. If you want this fork, depend on this Git repository explicitly and pin an exact revision.
 
+## Why this fork exists
+
+Ardosia maintains this fork because its transport requirements exposed correctness and runtime behavior that could not be handled purely in the consuming application while preserving a clean RakNet boundary.
+
+Relative to the preserved upstream baseline, the maintained fork includes work around:
+
+- fair scheduling across sharded Tokio transport workers;
+- explicit pending/established-peer block enforcement without incorrectly charging the coarse offline/unknown packet window;
+- connected processing-budget accounting for Frames as well as ACK/NACK traffic;
+- regression coverage for connected rate limiting and legacy handshake behavior;
+- compatibility fixes required for older RakNet peers while keeping protocol-version selection configurable rather than game-specific.
+
+Those changes remain generic transport concerns. Ardosia-specific packet semantics, session policy, world state, and Minecraft compatibility logic stay in higher layers. The fork preserves upstream ancestry and attribution so behavior can be compared against the recorded baseline and fixes can be evaluated for possible upstream relevance.
+
 ## Scope
 
 The hardfork owns:
