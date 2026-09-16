@@ -1,36 +1,42 @@
 # Current State
 
 Last updated: 2026-09-16
-Current milestone: centralized-documentation cleanup
+Current milestone: centralized-documentation migration complete
 Current branch: `main`
-Current head after workflow harness installation: `bf4256bcb3ba89aeced86d282971c49d0dc6a32c`
 Current network-consumed revision: `55b57787b6715ef2a931631ef4b690e3df0651e5`
 
 ## Working
 - Standalone generic RakNet transport hardfork.
 - Configurable protocol-version compatibility used by Ardosia for RakNet 8.
 - Wider Ardosia stack has exercised the pinned transport path with a real 0.15.10 client.
-- `.agent/` continuity harness is installed on `main`.
+- `.agent/` continuity harness remains local and authoritative for execution state.
+- Durable README, upstream provenance, consumer-pin policy, contribution/security guidance, and the branch-only Ardosia integration note are archived in `ardosia/ardosia-docs` with source provenance.
+- Re-fetched central copies have blob SHAs identical to the migrated source documents.
+- Public README/UPSTREAM/CONSUMER-PINS/CONTRIBUTING/SECURITY files remain in this repository intentionally because they are live consumer, provenance, operational, or security surfaces.
+- The unique `docs-runtime-status/ARDOSIA-INTEGRATION.md` duplicate was removed after central verification.
 
 ## Partially working / branch state
 - `main` is ahead of the exact revision currently consumed by `ardosia-network`; later commits are not automatically consumer-verified.
-- `docs-runtime-status` has one unique `ARDOSIA-INTEGRATION.md` documentation commit but is behind newer main docs; preserve its useful prose during central migration rather than treating it as runtime work.
+- `docs-runtime-status` no longer carries unique durable integration prose; it is now only a historical maintenance branch and should not be merged merely to restore centralized documentation.
 
 ## Broken / failing
-- No transport defect is established by the current cleanup evidence.
-- Durable fork/integration documentation remains local pending central migration.
+- No transport defect is established by this documentation cleanup.
 
 ## Test status
-- Full standalone RakNet gate: **NOT RUN** in this workflow migration round.
+- Central documentation copy verification: **PASS** — re-fetched migrated documents matched original source blob SHAs.
+- Branch-only integration-note source cleanup: **PASS**.
+- Full standalone RakNet gate: **NOT RUN** in this documentation-only migration round.
 - Short hosted soak/CI: **NOT RUN** / not queried in this round.
 - Wider server real-client connection smoke through the current pinned stack: **PASS**, but this is not a standalone transport gate.
 
 ## Current blocker
-- Central docs migration is **BLOCKED** until `ardosia/ardosia-docs` exists; the available GitHub connector cannot create repositories.
+None.
 
 ## Active work
-- Centralize README/UPSTREAM/CONSUMER-PINS/contribution/security/integration documentation after the docs repository exists.
+- Organization-wide documentation migration continues in sibling repositories.
+- No RakNet consumer pin movement is implied by this cleanup.
 
 ## Important temporary facts
 - Do not move the network consumer pin as part of documentation cleanup.
 - Do not weaken transport abuse-control defaults to satisfy synthetic localhost load behavior without measured evidence.
+- Keep public provenance/security/contribution surfaces local even though canonical archival copies also exist in `ardosia-docs`.
