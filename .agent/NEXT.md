@@ -1,13 +1,15 @@
 # Next Work
 
-1. Finish central documentation migration after `ardosia/ardosia-docs` exists.
-   - Migrate README, UPSTREAM, CONSUMER-PINS, contribution/security prose, and the unique `docs-runtime-status` integration note with provenance.
-   - Verify central copies before deleting duplicated local docs.
+1. Leave the exact consumer pin unchanged until a dedicated transport update is requested and validated.
+   - Newer `main` commits are not automatically part of the Network/server stack.
+   - Any pin move must identify old/new SHAs and the transport behavior/evidence between them.
 
-2. Reconcile the stale `docs-runtime-status` branch after central migration.
-   - Preserve the useful integration note centrally.
-   - Do not merge it merely to restore old documentation files that are being centralized.
+2. Treat `docs-runtime-status` as historical branch state.
+   - Its unique integration prose is now preserved in `ardosia-docs` and the source duplicate has been removed.
+   - Do not merge the branch merely to restore centralized documentation.
 
-3. Leave the exact consumer pin unchanged until a dedicated transport update is requested and validated.
+3. Continue normal RakNet maintenance through evidence-backed issues and focused PRs.
+   - For behavior changes, run the full Rust 1.98 gate plus relevant soak/protocol regression checks.
+   - Record actual PASS/FAIL/BLOCKED/NOT RUN outcomes in `STATE.md`.
 
-4. For any future RakNet behavior change, run the full Rust 1.98 gate and relevant soak/protocol regression checks; record actual outcomes in `STATE.md`.
+Completed prerequisite: RakNet durable documentation migration is complete and centrally verified while public consumer/provenance/security surfaces remain intentionally local.
