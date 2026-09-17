@@ -1,15 +1,8 @@
 # Next Work
 
-1. Leave the exact consumer pin unchanged until a dedicated transport update is requested and validated.
-   - Newer `main` commits are not automatically part of the Network/server stack.
-   - Any pin move must identify old/new SHAs and the transport behavior/evidence between them.
+1. Keep the exact network-consumed RakNet revision stable while higher-layer identity/inventory convergence proceeds.
+2. Reconcile newer RakNet work with the consumer pin only as a bounded transport slice with the Rust 1.98 gate and any required soak/integration validation actually run.
+3. Accept future work only for concrete RakNet mechanics/compatibility defects; keep game protocol, gameplay, account identity, and inventory semantics out of this crate.
+4. When new transport evidence changes expected behavior, land the validated implementation here or persist the exact deferment in this queue.
 
-2. Treat `docs-runtime-status` as historical branch state.
-   - Its unique integration prose is now preserved in `ardosia-docs` and the source duplicate has been removed.
-   - Do not merge the branch merely to restore centralized documentation.
-
-3. Continue normal RakNet maintenance through evidence-backed issues and focused PRs.
-   - For behavior changes, run the full Rust 1.98 gate plus relevant soak/protocol regression checks.
-   - Record actual PASS/FAIL/BLOCKED/NOT RUN outcomes in `STATE.md`.
-
-Completed prerequisite: RakNet durable documentation migration is complete and centrally verified while public consumer/provenance/security surfaces remain intentionally local.
+Documentation centralization is complete and is not active work.
